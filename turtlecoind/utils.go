@@ -25,12 +25,16 @@ func makePostRequest(hostURL string, hostPort int, method string, params interfa
 	payload["params"] = params
 
 	jsonpayload, err := json.Marshal(payload)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
 
 	body := bytes.NewBuffer(jsonpayload)
 
-	req, err := http.NewRequest("POST", "http://"+hostURL+":"+strconv.Itoa(hostPort)+"/json_rpc", body)
-	if err != nil {
-		fmt.Println(err)
+	req, err1 := http.NewRequest("POST", "http://"+hostURL+":"+strconv.Itoa(hostPort)+"/json_rpc", body)
+	if err1 != nil {
+		fmt.Println(err1)
 		return nil
 	}
 
@@ -47,6 +51,11 @@ func decodeResponse(req *http.Request) *bytes.Buffer {
 	}
 	defer resp.Body.Close()
 
-	responseBody, err := ioutil.ReadAll(resp.Body)
+	responseBody, err1 := ioutil.ReadAll(resp.Body)
+	if err1 != nil {
+		fmt.Println(err1)
+		return nil
+	}
+
 	return bytes.NewBuffer(responseBody)
 }
