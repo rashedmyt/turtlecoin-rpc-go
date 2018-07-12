@@ -100,7 +100,7 @@ func GetBlockHeaderByHeight(hostURL string, hostPort int, height int) *bytes.Buf
 }
 
 /*
-GetCurrencyId method returns the currency id of the network
+GetCurrencyID method returns the currency id of the network
 */
 func GetCurrencyID(hostURL string, hostPort int) *bytes.Buffer {
 	params := make(map[string]interface{})
