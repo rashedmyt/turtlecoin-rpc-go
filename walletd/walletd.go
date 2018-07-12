@@ -160,7 +160,7 @@ func SendTransaction(rpcPassword string, hostURL string, hostPort int,
 	params["unlockTime"] = unlockTime
 	params["anonymity"] = anonymity
 	params["extra"] = extra
-	params["paymentId"] = paymentID
+	params["paymentID"] = paymentID
 	params["changeAddress"] = changeAddress
 
 	return makePostRequest(rpcPassword, hostURL, hostPort, "sendTransaction", params)
@@ -183,7 +183,7 @@ func CreateDelayedTransaction(rpcPassword string, hostURL string, hostPort int,
 	params["unlockTime"] = unlockTime
 	params["anonymity"] = anonymity
 	params["extra"] = extra
-	params["paymentId"] = paymentID
+	params["paymentID"] = paymentID
 	params["changeAddress"] = changeAddress
 
 	return makePostRequest(rpcPassword, hostURL, hostPort, "createDelayedTransaction", params)
@@ -249,6 +249,6 @@ the specified address with paymentID
 func CreateIntegratedAddress(rpcPassword string, hostURL string, hostPort int, address string, paymentID string) *bytes.Buffer {
 	params := make(map[string]interface{})
 	params["address"] = address
-	params["paymentId"] = paymentID
+	params["paymentID"] = paymentID
 	return makePostRequest(rpcPassword, hostURL, hostPort, "createIntegratedAddress", params)
 }
