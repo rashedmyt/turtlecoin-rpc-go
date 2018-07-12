@@ -20,6 +20,10 @@ func GetPeers(hostURL string, hostPort int) *bytes.Buffer {
 	return makeGetRequest("getpeers", hostURL, hostPort)
 }
 
+func GetFeeInfo(hostURL string, hostPort int) *bytes.Buffer {
+	return makeGetRequest("feeinfo", hostURL, hostPort)
+}
+
 func GetBlockCount(hostURL string, hostPort int) *bytes.Buffer {
 	params := make(map[string]interface{})
 	return makePostRequest(hostURL, hostPort, "getblockcount", params)

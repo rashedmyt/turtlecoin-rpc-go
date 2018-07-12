@@ -159,3 +159,10 @@ func EstimateFusion(rpcPassword string, hostURL string, hostPort int, threshold 
 	params["addresses"] = addresses
 	return makePostRequest(rpcPassword, hostURL, hostPort, "estimateFusion", params)
 }
+
+func CreateIntegratedAddress(rpcPassword string, hostURL string, hostPort int, address string, paymentID string) *bytes.Buffer {
+	params := make(map[string]interface{})
+	params["address"] = address
+	params["paymentId"] = paymentID
+	return makePostRequest(rpcPassword, hostURL, hostPort, "createIntegratedAddress", params)
+}
