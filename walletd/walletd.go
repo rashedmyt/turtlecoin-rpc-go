@@ -187,9 +187,14 @@ func CreateDelayedTransaction(rpcPassword string, hostURL string, hostPort int,
 	params["fee"] = fee
 	params["unlockTime"] = unlockTime
 	params["anonymity"] = anonymity
-	params["extra"] = extra
-	params["paymentId"] = paymentID
 	params["changeAddress"] = changeAddress
+	if extra != "" && paymentID != "" {
+		panic("Can't set paymentId and extra together")
+	} else if extra != "" {
+		params["extra"] = extra
+	} else {
+		params["paymentId"] = paymentID
+	}
 
 	return makePostRequest(rpcPassword, hostURL, hostPort, "createDelayedTransaction", params)
 }
