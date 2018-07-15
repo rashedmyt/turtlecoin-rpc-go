@@ -1,3 +1,11 @@
+/*
+
+Copyright (c) 2018 Rashed Mohammed, The TurtleCoin Developers
+
+Please see the included LICENSE file for more information
+
+*/
+
 package walletd
 
 import (
@@ -149,10 +157,18 @@ func GetTransaction(rpcPassword string, hostURL string, hostPort int, transactio
 /*
 SendTransaction method sends specified transactions
 */
-func SendTransaction(rpcPassword string, hostURL string, hostPort int,
+func SendTransaction(
+	rpcPassword string,
+	hostURL string,
+	hostPort int,
 	addresses []string,
 	transfers []map[string]interface{},
-	fee int, unlockTime int, anonymity int, extra string, paymentID string, changeAddress string) *bytes.Buffer {
+	fee int,
+	unlockTime int,
+	anonymity int,
+	extra string,
+	paymentID string,
+	changeAddress string) *bytes.Buffer {
 	params := make(map[string]interface{})
 	params["addresses"] = addresses
 	params["transfers"] = transfers
@@ -177,10 +193,18 @@ CreateDelayedTransaction method allows you to create a delayed transaction
 Such transactions are not sent into the network automatically and should be pushed
 using SendDelayedTransaction method
 */
-func CreateDelayedTransaction(rpcPassword string, hostURL string, hostPort int,
+func CreateDelayedTransaction(
+	rpcPassword string,
+	hostURL string,
+	hostPort int,
 	addresses []string,
 	transfers []map[string]interface{},
-	fee int, unlockTime int, anonymity int, extra string, paymentID string, changeAddress string) *bytes.Buffer {
+	fee int,
+	unlockTime int,
+	anonymity int,
+	extra string,
+	paymentID string,
+	changeAddress string) *bytes.Buffer {
 	params := make(map[string]interface{})
 	params["addresses"] = addresses
 	params["transfers"] = transfers
@@ -230,8 +254,14 @@ func SendDelayedTransaction(rpcPassword string, hostURL string, hostPort int, tr
 SendFusionTransaction method allows you to send a fusion transaction from selected address to destination
 address. If there aren't any outputs that can be optimized it returns an error.
 */
-func SendFusionTransaction(rpcPassword string, hostURL string, hostPort int,
-	threshold int, anonymity int, addresses []string, destinationAddress string) *bytes.Buffer {
+func SendFusionTransaction(
+	rpcPassword string,
+	hostURL string,
+	hostPort int,
+	threshold int,
+	anonymity int,
+	addresses []string,
+	destinationAddress string) *bytes.Buffer {
 	params := make(map[string]interface{})
 	params["threshold"] = threshold
 	params["anonymity"] = anonymity
