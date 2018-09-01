@@ -134,7 +134,7 @@ func GetBlock(hostURL string, hostPort int, hash string) *bytes.Buffer {
 }
 
 /*
-GetTransaction method returns informaiton of transaction corresponding to given input hash
+GetTransaction method returns information of transaction corresponding to given input hash
 */
 func GetTransaction(hostURL string, hostPort int, hash string) *bytes.Buffer {
 	params := make(map[string]interface{})
