@@ -1,5 +1,7 @@
 # TurtleCoin RPC API
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/rashedmyt/turtlecoin-rpc-go)](https://goreportcard.com/report/github.com/rashedmyt/turtlecoin-rpc-go)
+
 A Golang wrapper for the TurtleCoin RPC API
 
 
