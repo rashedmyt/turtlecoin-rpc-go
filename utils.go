@@ -17,8 +17,8 @@ import (
 	"strconv"
 )
 
-func makeGetRequest(hostURL string, hostPort int, method string) *bytes.Buffer {
-	req, err := http.NewRequest("GET", "http://"+hostURL+":"+strconv.Itoa(hostPort)+"/"+method, nil)
+func (daemon *TurtleCoind) makeGetRequest(method string) *bytes.Buffer {
+	req, err := http.NewRequest("GET", "http://"+daemon.URL+":"+strconv.Itoa(daemon.Port)+"/"+method, nil)
 	if err != nil {
 		fmt.Println(err)
 		return nil
@@ -26,7 +26,7 @@ func makeGetRequest(hostURL string, hostPort int, method string) *bytes.Buffer {
 	return decodeResponse(req)
 }
 
-func makeDaemonPostRequest(hostURL string, hostPort int, method string, params interface{}) *bytes.Buffer {
+func (daemon *TurtleCoind) makePostRequest(method string, params interface{}) *bytes.Buffer {
 	payload := make(map[string]interface{})
 	payload["jsonrpc"] = "2.0"
 	payload["method"] = method
@@ -40,7 +40,7 @@ func makeDaemonPostRequest(hostURL string, hostPort int, method string, params i
 
 	body := bytes.NewBuffer(jsonpayload)
 
-	req, err1 := http.NewRequest("POST", "http://"+hostURL+":"+strconv.Itoa(hostPort)+"/json_rpc", body)
+	req, err1 := http.NewRequest("POST", "http://"+daemon.URL+":"+strconv.Itoa(daemon.Port)+"/json_rpc", body)
 	if err1 != nil {
 		fmt.Println(err1)
 		return nil
