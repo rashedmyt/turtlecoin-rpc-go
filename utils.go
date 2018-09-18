@@ -49,11 +49,11 @@ func (daemon *TurtleCoind) makePostRequest(method string, params interface{}) *b
 	return decodeResponse(req)
 }
 
-func makeWalletPostRequest(rpcPassword string, hostURL string, hostPort int, method string, params interface{}) *bytes.Buffer {
+func (wallet *Walletd) makePostRequest(method string, params interface{}) *bytes.Buffer {
 	payload := make(map[string]interface{})
 	payload["jsonrpc"] = "2.0"
 	payload["id"] = 1
-	payload["password"] = rpcPassword
+	payload["password"] = wallet.RPCPassword
 	payload["method"] = method
 	payload["params"] = params
 
@@ -65,7 +65,7 @@ func makeWalletPostRequest(rpcPassword string, hostURL string, hostPort int, met
 
 	body := bytes.NewBuffer(jsonpayload)
 
-	req, err1 := http.NewRequest("POST", "http://"+hostURL+":"+strconv.Itoa(hostPort)+"/json_rpc", body)
+	req, err1 := http.NewRequest("POST", "http://"+wallet.URL+":"+strconv.Itoa(wallet.Port)+"/json_rpc", body)
 	if err1 != nil {
 		fmt.Println(err1)
 		return nil
