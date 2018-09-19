@@ -320,3 +320,13 @@ func (wallet *Walletd) CreateIntegratedAddress(address string, paymentID string)
 	params["paymentId"] = paymentID
 	return wallet.makePostRequest("createIntegratedAddress", params)
 }
+
+/*
+GetFeeInfo method returns the fee information that the service picks up from the
+connected daemon
+*/
+func (wallet *Walletd) GetFeeInfo() *bytes.Buffer {
+	wallet.check()
+	params := make(map[string]interface{})
+	return wallet.makePostRequest("getFeeInfo", params)
+}
