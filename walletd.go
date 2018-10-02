@@ -8,7 +8,10 @@ Please see the included LICENSE file for more information
 
 package turtlecoinrpc
 
-import "bytes"
+import (
+	"bytes"
+	"errors"
+)
 
 // Walletd structure contains the URL and Port
 // info of the node and RPC Password for RPC calls
@@ -18,22 +21,29 @@ type Walletd struct {
 	RPCPassword string
 }
 
-func (wallet *Walletd) check() {
+func (wallet *Walletd) check() error {
 	if wallet.URL == "" {
 		wallet.URL = "127.0.0.1"
 	}
 	if wallet.Port == 0 {
 		wallet.Port = 8070
 	}
+	if wallet.RPCPassword == "" {
+		return errors.New("RPCPassword not specified")
+	}
+	return nil
 }
 
 /*
 Save method saves the wallet without closing it.
 */
-func (wallet *Walletd) Save() *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) Save() (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("save", params)
+	return wallet.makePostRequest("save", params), nil
 }
 
 /*
@@ -41,107 +51,138 @@ Reset method resyncs the wallet if no viewSecretKey is given.
 If viewSecretKey is given then it replaces the existing wallet with a new one
 corresponding to the viewSecretKey
 */
-func (wallet *Walletd) Reset(viewSecretKey string) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) Reset(viewSecretKey string, scanHeight int) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["viewSecretKey"] = viewSecretKey
-	return wallet.makePostRequest("reset", params)
+	params["scanHeight"] = scanHeight
+	return wallet.makePostRequest("reset", params), nil
 }
 
 /*
 CreateAddress method creates a new address inside the container along with old addresses
 */
-func (wallet *Walletd) CreateAddress() *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) CreateAddress() (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("createAddress", params)
+	return wallet.makePostRequest("createAddress", params), nil
 }
 
 /*
 DeleteAddress method deletes the specified address from the container
 */
-func (wallet *Walletd) DeleteAddress(address string) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) DeleteAddress(address string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["address"] = address
-	return wallet.makePostRequest("deleteAddress", params)
+	return wallet.makePostRequest("deleteAddress", params), nil
 }
 
 /*
 GetSpendKeys method returns the spendPublicKey and spendSecretKey corresponding
 the given input wallet address
 */
-func (wallet *Walletd) GetSpendKeys(address string) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetSpendKeys(address string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["address"] = address
-	return wallet.makePostRequest("getSpendKeys", params)
+	return wallet.makePostRequest("getSpendKeys", params), nil
 }
 
 /*
 GetBalance method returns the balance present in the specified address
 If the address is empty then returns the balance present in the container
 */
-func (wallet *Walletd) GetBalance(address string) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetBalance(address string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["address"] = address
-	return wallet.makePostRequest("getBalance", params)
+	return wallet.makePostRequest("getBalance", params), nil
 }
 
 /*
 GetBlockHashes method returns array of hashes starting from specified blockIndex upto blockCount
 */
-func (wallet *Walletd) GetBlockHashes(firstBlockIndex int, blockCount int) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetBlockHashes(firstBlockIndex int, blockCount int) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["firstBlockIndex"] = firstBlockIndex
 	params["blockCount"] = blockCount
-	return wallet.makePostRequest("getBlockHashes", params)
+	return wallet.makePostRequest("getBlockHashes", params), nil
 }
 
 /*
 GetTransactionHashes method returns array of objects containing block and transaction hashes
 of the specified address
 */
-func (wallet *Walletd) GetTransactionHashes(firstBlockIndex int, blockCount int) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetTransactionHashes(firstBlockIndex int, blockCount int) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["firstBlockIndex"] = firstBlockIndex
 	params["blockCount"] = blockCount
-	return wallet.makePostRequest("getTransactionHashes", params)
+	return wallet.makePostRequest("getTransactionHashes", params), nil
 }
 
 /*
 GetTransactions method returns array of objects containing block and transaction details
 of the specified address
 */
-func (wallet *Walletd) GetTransactions(firstBlockIndex int, blockCount int) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetTransactions(firstBlockIndex int, blockCount int) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["firstBlockIndex"] = firstBlockIndex
 	params["blockCount"] = blockCount
-	return wallet.makePostRequest("getTransactions", params)
+	return wallet.makePostRequest("getTransactions", params), nil
 }
 
 /*
 GetUnconfirmedTransactionHashes method returns array of hashes of unconfirmed transactions of the specified address
 */
-func (wallet *Walletd) GetUnconfirmedTransactionHashes(address string) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetUnconfirmedTransactionHashes(address string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["address"] = address
-	return wallet.makePostRequest("getUnconfirmedTransactionHashes", params)
+	return wallet.makePostRequest("getUnconfirmedTransactionHashes", params), nil
 }
 
 /*
 GetTransaction method returns the transaction details of a particular specified transaction hash
 */
-func (wallet *Walletd) GetTransaction(transactionHash string) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetTransaction(transactionHash string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["transactionHash"] = transactionHash
-	return wallet.makePostRequest("getTransaction", params)
+	return wallet.makePostRequest("getTransaction", params), nil
 }
 
 /*
@@ -157,8 +198,11 @@ func (wallet *Walletd) SendTransaction(
 	unlockTime int,
 	extra string,
 	paymentID string,
-	changeAddress string) *bytes.Buffer {
-	wallet.check()
+	changeAddress string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["addresses"] = addresses
 	params["transfers"] = transfers
@@ -173,7 +217,7 @@ func (wallet *Walletd) SendTransaction(
 		params["paymentId"] = paymentID
 	}
 
-	return wallet.makePostRequest("sendTransaction", params)
+	return wallet.makePostRequest("sendTransaction", params), nil
 }
 
 /*
@@ -191,8 +235,11 @@ func (wallet *Walletd) CreateDelayedTransaction(
 	unlockTime int,
 	extra string,
 	paymentID string,
-	changeAddress string) *bytes.Buffer {
-	wallet.check()
+	changeAddress string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["addresses"] = addresses
 	params["transfers"] = transfers
@@ -207,75 +254,96 @@ func (wallet *Walletd) CreateDelayedTransaction(
 		params["paymentId"] = paymentID
 	}
 
-	return wallet.makePostRequest("createDelayedTransaction", params)
+	return wallet.makePostRequest("createDelayedTransaction", params), nil
 }
 
 /*
 GetDelayedTransactionHashes method returns array of delayedTransactionHashes
 */
-func (wallet *Walletd) GetDelayedTransactionHashes() *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetDelayedTransactionHashes() (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("getDelayedTransactionHashes", params)
+	return wallet.makePostRequest("getDelayedTransactionHashes", params), nil
 }
 
 /*
 DeleteDelayedTransaction method deletes the specified delayedTransactionHash
 */
-func (wallet *Walletd) DeleteDelayedTransaction(transactionHash string) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) DeleteDelayedTransaction(transactionHash string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["transactionHash"] = transactionHash
-	return wallet.makePostRequest("deleteDelayedTransaction", params)
+	return wallet.makePostRequest("deleteDelayedTransaction", params), nil
 }
 
 /*
 SendDelayedTransaction method sends the delayedTransaction created using CreateDelayedTransaction
 method into the network
 */
-func (wallet *Walletd) SendDelayedTransaction(transactionHash string) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) SendDelayedTransaction(transactionHash string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["transactionHash"] = transactionHash
-	return wallet.makePostRequest("sendDelayedTransaction", params)
+	return wallet.makePostRequest("sendDelayedTransaction", params), nil
 }
 
 /*
 GetViewKey method returns the viewSecretKey of the wallet
 */
-func (wallet *Walletd) GetViewKey() *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetViewKey() (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("getViewKey", params)
+	return wallet.makePostRequest("getViewKey", params), nil
 }
 
 /*
 GetMnemonicSeed method returns the 25 word random seed corresponding to
 the given input wallet address
 */
-func (wallet *Walletd) GetMnemonicSeed(address string) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetMnemonicSeed(address string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["address"] = address
-	return wallet.makePostRequest("getMnemonicSeed", params)
+	return wallet.makePostRequest("getMnemonicSeed", params), nil
 }
 
 /*
 GetStatus method returns the sync state of the wallet and known top block height
 */
-func (wallet *Walletd) GetStatus() *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetStatus() (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("getStatus", params)
+	return wallet.makePostRequest("getStatus", params), nil
 }
 
 /*
 GetAddresses method returns an array of addresses present in the container
 */
-func (wallet *Walletd) GetAddresses() *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetAddresses() (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("getAddresses", params)
+	return wallet.makePostRequest("getAddresses", params), nil
 }
 
 /*
@@ -288,45 +356,57 @@ func (wallet *Walletd) SendFusionTransaction(
 	hostPort int,
 	threshold int,
 	addresses []string,
-	destinationAddress string) *bytes.Buffer {
-	wallet.check()
+	destinationAddress string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["threshold"] = threshold
 	params["addresses"] = addresses
 	params["destinationAddress"] = destinationAddress
-	return wallet.makePostRequest("sendFusionTransaction", params)
+	return wallet.makePostRequest("sendFusionTransaction", params), nil
 }
 
 /*
 EstimateFusion method returns the number of outputs that can be optimized
 This is helpful for sending fusion transactions
 */
-func (wallet *Walletd) EstimateFusion(threshold int, addresses []string) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) EstimateFusion(threshold int, addresses []string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["threshold"] = threshold
 	params["addresses"] = addresses
-	return wallet.makePostRequest("estimateFusion", params)
+	return wallet.makePostRequest("estimateFusion", params), nil
 }
 
 /*
 CreateIntegratedAddress method creates a unique 236 char long address which corresponds to
 the specified address with paymentID
 */
-func (wallet *Walletd) CreateIntegratedAddress(address string, paymentID string) *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) CreateIntegratedAddress(address string, paymentID string) (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
 	params["address"] = address
 	params["paymentId"] = paymentID
-	return wallet.makePostRequest("createIntegratedAddress", params)
+	return wallet.makePostRequest("createIntegratedAddress", params), nil
 }
 
 /*
 GetFeeInfo method returns the fee information that the service picks up from the
 connected daemon
 */
-func (wallet *Walletd) GetFeeInfo() *bytes.Buffer {
-	wallet.check()
+func (wallet *Walletd) GetFeeInfo() (*bytes.Buffer, error) {
+	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("getFeeInfo", params)
+	return wallet.makePostRequest("getFeeInfo", params), nil
 }
