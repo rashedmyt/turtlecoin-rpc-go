@@ -51,7 +51,7 @@ Reset method resyncs the wallet if no viewSecretKey is given.
 If viewSecretKey is given then it replaces the existing wallet with a new one
 corresponding to the viewSecretKey
 */
-func (wallet *Walletd) Reset(viewSecretKey string, scanHeight int) (*bytes.Buffer, error) {
+func (wallet *Walletd) Reset(viewSecretKey string, scanHeight int, newAddress string) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -59,18 +59,27 @@ func (wallet *Walletd) Reset(viewSecretKey string, scanHeight int) (*bytes.Buffe
 	params := make(map[string]interface{})
 	params["viewSecretKey"] = viewSecretKey
 	params["scanHeight"] = scanHeight
+	params["newAddress"] = newAddress
 	return wallet.makePostRequest("reset", params), nil
 }
 
 /*
 CreateAddress method creates a new address inside the container along with old addresses
 */
-func (wallet *Walletd) CreateAddress() (*bytes.Buffer, error) {
+func (wallet *Walletd) CreateAddress(
+	spendSecretKey string,
+	spendPublicKey string,
+	scanHeight int,
+	newAddress string) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
 	}
 	params := make(map[string]interface{})
+	params["spendSecretKey"] = spendSecretKey
+	params["spendPublicKey"] = spendPublicKey
+	params["scanHeight"] = scanHeight
+	params["newAddress"] = newAddress
 	return wallet.makePostRequest("createAddress", params), nil
 }
 
@@ -133,14 +142,22 @@ func (wallet *Walletd) GetBlockHashes(firstBlockIndex int, blockCount int) (*byt
 GetTransactionHashes method returns array of objects containing block and transaction hashes
 of the specified address
 */
-func (wallet *Walletd) GetTransactionHashes(firstBlockIndex int, blockCount int) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetTransactionHashes(
+	addresses []string,
+	blockHash string,
+	firstBlockIndex int,
+	blockCount int,
+	paymentID string) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
 	}
 	params := make(map[string]interface{})
+	params["addresses"] = addresses
+	params["blockHash"] = blockHash
 	params["firstBlockIndex"] = firstBlockIndex
 	params["blockCount"] = blockCount
+	params["paymentId"] = paymentID
 	return wallet.makePostRequest("getTransactionHashes", params), nil
 }
 
@@ -148,14 +165,22 @@ func (wallet *Walletd) GetTransactionHashes(firstBlockIndex int, blockCount int)
 GetTransactions method returns array of objects containing block and transaction details
 of the specified address
 */
-func (wallet *Walletd) GetTransactions(firstBlockIndex int, blockCount int) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetTransactions(
+	addresses []string,
+	blockHash string,
+	firstBlockIndex int,
+	blockCount int,
+	paymentID string) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
 	}
 	params := make(map[string]interface{})
+	params["addresses"] = addresses
+	params["blockHash"] = blockHash
 	params["firstBlockIndex"] = firstBlockIndex
 	params["blockCount"] = blockCount
+	params["paymentId"] = paymentID
 	return wallet.makePostRequest("getTransactions", params), nil
 }
 
@@ -189,9 +214,6 @@ func (wallet *Walletd) GetTransaction(transactionHash string) (*bytes.Buffer, er
 SendTransaction method sends specified transactions
 */
 func (wallet *Walletd) SendTransaction(
-	rpcPassword string,
-	hostURL string,
-	hostPort int,
 	addresses []string,
 	transfers []map[string]interface{},
 	fee int,
@@ -226,9 +248,6 @@ Such transactions are not sent into the network automatically and should be push
 using SendDelayedTransaction method
 */
 func (wallet *Walletd) CreateDelayedTransaction(
-	rpcPassword string,
-	hostURL string,
-	hostPort int,
 	addresses []string,
 	transfers []map[string]interface{},
 	fee int,
@@ -351,9 +370,6 @@ SendFusionTransaction method allows you to send a fusion transaction from select
 address. If there aren't any outputs that can be optimized it returns an error.
 */
 func (wallet *Walletd) SendFusionTransaction(
-	rpcPassword string,
-	hostURL string,
-	hostPort int,
 	threshold int,
 	addresses []string,
 	destinationAddress string) (*bytes.Buffer, error) {
