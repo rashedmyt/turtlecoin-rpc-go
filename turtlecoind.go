@@ -52,9 +52,9 @@ func (daemon *TurtleCoind) Transactions() *bytes.Buffer {
 */
 
 /*
-FeeInfo method returns the fee set by the remote node
+Fee method returns the fee set by the node
 */
-func (daemon *TurtleCoind) FeeInfo() *bytes.Buffer {
+func (daemon *TurtleCoind) Fee() *bytes.Buffer {
 	daemon.check()
 	return daemon.makeGetRequest("feeinfo")
 }

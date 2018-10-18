@@ -51,13 +51,12 @@ Reset method resyncs the wallet if no viewSecretKey is given.
 If viewSecretKey is given then it replaces the existing wallet with a new one
 corresponding to the viewSecretKey
 */
-func (wallet *Walletd) Reset(viewSecretKey string, scanHeight int) (*bytes.Buffer, error) {
+func (wallet *Walletd) Reset(scanHeight int) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	params["viewSecretKey"] = viewSecretKey
 	params["scanHeight"] = scanHeight
 	return wallet.makePostRequest("reset", params), nil
 }
@@ -65,12 +64,32 @@ func (wallet *Walletd) Reset(viewSecretKey string, scanHeight int) (*bytes.Buffe
 /*
 CreateAddress method creates a new address inside the container along with old addresses
 */
-func (wallet *Walletd) CreateAddress() (*bytes.Buffer, error) {
+func (wallet *Walletd) CreateAddress(
+	spendSecretKey string,
+	spendPublicKey string,
+	scanHeight int,
+	newAddress bool) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
 	}
+
 	params := make(map[string]interface{})
+
+	if spendSecretKey != "" && spendPublicKey != "" {
+		return nil, errors.New("Cannot specify both spend keys.. either or both should be empty")
+	} else if spendPublicKey == "" {
+		params["spendSecretKey"] = spendSecretKey
+	} else {
+		params["spendPublicKey"] = spendPublicKey
+	}
+
+	if newAddress {
+		params["newAddress"] = newAddress
+	} else {
+		params["scanHeight"] = scanHeight
+	}
+
 	return wallet.makePostRequest("createAddress", params), nil
 }
 
@@ -133,14 +152,27 @@ func (wallet *Walletd) GetBlockHashes(firstBlockIndex int, blockCount int) (*byt
 GetTransactionHashes method returns array of objects containing block and transaction hashes
 of the specified address
 */
-func (wallet *Walletd) GetTransactionHashes(firstBlockIndex int, blockCount int) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetTransactionHashes(
+	addresses []string,
+	blockHash string,
+	firstBlockIndex int,
+	blockCount int,
+	paymentID string) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	params["firstBlockIndex"] = firstBlockIndex
+
+	if blockHash != "" {
+		params["blockHash"] = blockHash
+	} else {
+		params["firstBlockIndex"] = firstBlockIndex
+	}
+
+	params["addresses"] = addresses
 	params["blockCount"] = blockCount
+	params["paymentId"] = paymentID
 	return wallet.makePostRequest("getTransactionHashes", params), nil
 }
 
@@ -148,27 +180,40 @@ func (wallet *Walletd) GetTransactionHashes(firstBlockIndex int, blockCount int)
 GetTransactions method returns array of objects containing block and transaction details
 of the specified address
 */
-func (wallet *Walletd) GetTransactions(firstBlockIndex int, blockCount int) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetTransactions(
+	addresses []string,
+	blockHash string,
+	firstBlockIndex int,
+	blockCount int,
+	paymentID string) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	params["firstBlockIndex"] = firstBlockIndex
+
+	if blockHash != "" {
+		params["blockHash"] = blockHash
+	} else {
+		params["firstBlockIndex"] = firstBlockIndex
+	}
+
+	params["addresses"] = addresses
 	params["blockCount"] = blockCount
+	params["paymentId"] = paymentID
 	return wallet.makePostRequest("getTransactions", params), nil
 }
 
 /*
 GetUnconfirmedTransactionHashes method returns array of hashes of unconfirmed transactions of the specified address
 */
-func (wallet *Walletd) GetUnconfirmedTransactionHashes(address string) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetUnconfirmedTransactionHashes(addresses []string) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	params["address"] = address
+	params["addresses"] = addresses
 	return wallet.makePostRequest("getUnconfirmedTransactionHashes", params), nil
 }
 
@@ -181,6 +226,11 @@ func (wallet *Walletd) GetTransaction(transactionHash string) (*bytes.Buffer, er
 		return nil, err
 	}
 	params := make(map[string]interface{})
+
+	if transactionHash == "" {
+		return nil, errors.New("transactionHash cannot be empty.. please specify a valid hash")
+	}
+
 	params["transactionHash"] = transactionHash
 	return wallet.makePostRequest("getTransaction", params), nil
 }
@@ -189,9 +239,6 @@ func (wallet *Walletd) GetTransaction(transactionHash string) (*bytes.Buffer, er
 SendTransaction method sends specified transactions
 */
 func (wallet *Walletd) SendTransaction(
-	rpcPassword string,
-	hostURL string,
-	hostPort int,
 	addresses []string,
 	transfers []map[string]interface{},
 	fee int,
@@ -209,8 +256,9 @@ func (wallet *Walletd) SendTransaction(
 	params["fee"] = fee
 	params["unlockTime"] = unlockTime
 	params["changeAddress"] = changeAddress
+
 	if extra != "" && paymentID != "" {
-		panic("Can't set paymentId and extra together")
+		return nil, errors.New("Can't set paymentID and extra together.. either or both should be empty")
 	} else if extra != "" {
 		params["extra"] = extra
 	} else {
@@ -226,9 +274,6 @@ Such transactions are not sent into the network automatically and should be push
 using SendDelayedTransaction method
 */
 func (wallet *Walletd) CreateDelayedTransaction(
-	rpcPassword string,
-	hostURL string,
-	hostPort int,
 	addresses []string,
 	transfers []map[string]interface{},
 	fee int,
@@ -246,8 +291,9 @@ func (wallet *Walletd) CreateDelayedTransaction(
 	params["fee"] = fee
 	params["unlockTime"] = unlockTime
 	params["changeAddress"] = changeAddress
+
 	if extra != "" && paymentID != "" {
-		panic("Can't set paymentId and extra together")
+		return nil, errors.New("Can't set paymentID and extra together.. either or both should be empty")
 	} else if extra != "" {
 		params["extra"] = extra
 	} else {
@@ -351,9 +397,6 @@ SendFusionTransaction method allows you to send a fusion transaction from select
 address. If there aren't any outputs that can be optimized it returns an error.
 */
 func (wallet *Walletd) SendFusionTransaction(
-	rpcPassword string,
-	hostURL string,
-	hostPort int,
 	threshold int,
 	addresses []string,
 	destinationAddress string) (*bytes.Buffer, error) {
