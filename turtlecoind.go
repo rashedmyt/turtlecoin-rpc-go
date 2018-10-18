@@ -52,7 +52,7 @@ func (daemon *TurtleCoind) Transactions() *bytes.Buffer {
 */
 
 /*
-FeeInfo method returns the fee set by the node
+Fee method returns the fee set by the node
 */
 func (daemon *TurtleCoind) Fee() *bytes.Buffer {
 	daemon.check()

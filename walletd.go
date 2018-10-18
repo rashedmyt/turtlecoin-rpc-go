@@ -51,15 +51,13 @@ Reset method resyncs the wallet if no viewSecretKey is given.
 If viewSecretKey is given then it replaces the existing wallet with a new one
 corresponding to the viewSecretKey
 */
-func (wallet *Walletd) Reset(viewSecretKey string, scanHeight int, newAddress string) (*bytes.Buffer, error) {
+func (wallet *Walletd) Reset(scanHeight int) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	params["viewSecretKey"] = viewSecretKey
 	params["scanHeight"] = scanHeight
-	params["newAddress"] = newAddress
 	return wallet.makePostRequest("reset", params), nil
 }
 
@@ -70,16 +68,28 @@ func (wallet *Walletd) CreateAddress(
 	spendSecretKey string,
 	spendPublicKey string,
 	scanHeight int,
-	newAddress string) (*bytes.Buffer, error) {
+	newAddress bool) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
 	}
+
 	params := make(map[string]interface{})
-	params["spendSecretKey"] = spendSecretKey
-	params["spendPublicKey"] = spendPublicKey
-	params["scanHeight"] = scanHeight
-	params["newAddress"] = newAddress
+
+	if spendSecretKey != "" && spendPublicKey != "" {
+		return nil, errors.New("Cannot specify both spend keys.. either or both should be empty")
+	} else if spendPublicKey == "" {
+		params["spendSecretKey"] = spendSecretKey
+	} else {
+		params["spendPublicKey"] = spendPublicKey
+	}
+
+	if newAddress {
+		params["newAddress"] = newAddress
+	} else {
+		params["scanHeight"] = scanHeight
+	}
+
 	return wallet.makePostRequest("createAddress", params), nil
 }
 
@@ -153,9 +163,14 @@ func (wallet *Walletd) GetTransactionHashes(
 		return nil, err
 	}
 	params := make(map[string]interface{})
+
+	if blockHash != "" {
+		params["blockHash"] = blockHash
+	} else {
+		params["firstBlockIndex"] = firstBlockIndex
+	}
+
 	params["addresses"] = addresses
-	params["blockHash"] = blockHash
-	params["firstBlockIndex"] = firstBlockIndex
 	params["blockCount"] = blockCount
 	params["paymentId"] = paymentID
 	return wallet.makePostRequest("getTransactionHashes", params), nil
@@ -176,9 +191,14 @@ func (wallet *Walletd) GetTransactions(
 		return nil, err
 	}
 	params := make(map[string]interface{})
+
+	if blockHash != "" {
+		params["blockHash"] = blockHash
+	} else {
+		params["firstBlockIndex"] = firstBlockIndex
+	}
+
 	params["addresses"] = addresses
-	params["blockHash"] = blockHash
-	params["firstBlockIndex"] = firstBlockIndex
 	params["blockCount"] = blockCount
 	params["paymentId"] = paymentID
 	return wallet.makePostRequest("getTransactions", params), nil
@@ -187,13 +207,13 @@ func (wallet *Walletd) GetTransactions(
 /*
 GetUnconfirmedTransactionHashes method returns array of hashes of unconfirmed transactions of the specified address
 */
-func (wallet *Walletd) GetUnconfirmedTransactionHashes(address string) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetUnconfirmedTransactionHashes(addresses []string) (*bytes.Buffer, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	params["address"] = address
+	params["addresses"] = addresses
 	return wallet.makePostRequest("getUnconfirmedTransactionHashes", params), nil
 }
 
@@ -206,6 +226,11 @@ func (wallet *Walletd) GetTransaction(transactionHash string) (*bytes.Buffer, er
 		return nil, err
 	}
 	params := make(map[string]interface{})
+
+	if transactionHash == "" {
+		return nil, errors.New("transactionHash cannot be empty.. please specify a valid hash")
+	}
+
 	params["transactionHash"] = transactionHash
 	return wallet.makePostRequest("getTransaction", params), nil
 }
@@ -231,8 +256,9 @@ func (wallet *Walletd) SendTransaction(
 	params["fee"] = fee
 	params["unlockTime"] = unlockTime
 	params["changeAddress"] = changeAddress
+
 	if extra != "" && paymentID != "" {
-		panic("Can't set paymentId and extra together")
+		return nil, errors.New("Can't set paymentID and extra together.. either or both should be empty")
 	} else if extra != "" {
 		params["extra"] = extra
 	} else {
@@ -265,8 +291,9 @@ func (wallet *Walletd) CreateDelayedTransaction(
 	params["fee"] = fee
 	params["unlockTime"] = unlockTime
 	params["changeAddress"] = changeAddress
+
 	if extra != "" && paymentID != "" {
-		panic("Can't set paymentId and extra together")
+		return nil, errors.New("Can't set paymentID and extra together.. either or both should be empty")
 	} else if extra != "" {
 		params["extra"] = extra
 	} else {
