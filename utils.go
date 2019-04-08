@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 Rashed Mohammed, The TurtleCoin Developers
+Copyright (c) 2018-2019 Rashed Mohammed, The TurtleCoin Developers
 
 Please see the included LICENSE file for more information
 
@@ -17,7 +17,7 @@ import (
 	"strconv"
 )
 
-func (daemon *TurtleCoind) makeGetRequest(method string) *bytes.Buffer {
+func (daemon *TurtleCoind) makeGetRequest(method string) map[string]interface{} {
 	req, err := http.NewRequest("GET", "http://"+daemon.URL+":"+strconv.Itoa(daemon.Port)+"/"+method, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -26,7 +26,7 @@ func (daemon *TurtleCoind) makeGetRequest(method string) *bytes.Buffer {
 	return decodeResponse(req)
 }
 
-func (daemon *TurtleCoind) makePostRequest(method string, params interface{}) *bytes.Buffer {
+func (daemon *TurtleCoind) makePostRequest(method string, params interface{}) map[string]interface{} {
 	payload := make(map[string]interface{})
 	payload["jsonrpc"] = "2.0"
 	payload["method"] = method
@@ -49,7 +49,7 @@ func (daemon *TurtleCoind) makePostRequest(method string, params interface{}) *b
 	return decodeResponse(req)
 }
 
-func (wallet *Walletd) makePostRequest(method string, params interface{}) *bytes.Buffer {
+func (wallet *Walletd) makePostRequest(method string, params interface{}) map[string]interface{} {
 	payload := make(map[string]interface{})
 	payload["jsonrpc"] = "2.0"
 	payload["id"] = 1
@@ -74,7 +74,7 @@ func (wallet *Walletd) makePostRequest(method string, params interface{}) *bytes
 	return decodeResponse(req)
 }
 
-func decodeResponse(req *http.Request) *bytes.Buffer {
+func decodeResponse(req *http.Request) map[string]interface{} {
 	client := &http.Client{}
 
 	resp, err := client.Do(req)
@@ -84,11 +84,22 @@ func decodeResponse(req *http.Request) *bytes.Buffer {
 	}
 	defer resp.Body.Close()
 
-	responseBody, err1 := ioutil.ReadAll(resp.Body)
-	if err1 != nil {
-		fmt.Println(err1)
-		return nil
+	if resp.StatusCode == http.StatusOK {
+		respBody, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println(err)
+			return nil
+		}
+
+		var respBodyInterface interface{}
+		if err = json.Unmarshal(respBody, &respBodyInterface); err != nil {
+			fmt.Println(err)
+			return nil
+		}
+
+		return respBodyInterface.(map[string]interface{})
 	}
 
-	return bytes.NewBuffer(responseBody)
+	fmt.Println(resp.StatusCode, resp.Status)
+	return nil
 }

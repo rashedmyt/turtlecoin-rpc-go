@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 Rashed Mohammed, The TurtleCoin Developers
+Copyright (c) 2018-2019 Rashed Mohammed, The TurtleCoin Developers
 
 Please see the included LICENSE file for more information
 
@@ -9,7 +9,6 @@ Please see the included LICENSE file for more information
 package turtlecoinrpc
 
 import (
-	"bytes"
 	"errors"
 )
 
@@ -37,7 +36,7 @@ func (wallet *Walletd) check() error {
 /*
 Save method saves the wallet without closing it.
 */
-func (wallet *Walletd) Save() (*bytes.Buffer, error) {
+func (wallet *Walletd) Save() (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -51,7 +50,7 @@ Reset method resyncs the wallet if no viewSecretKey is given.
 If viewSecretKey is given then it replaces the existing wallet with a new one
 corresponding to the viewSecretKey
 */
-func (wallet *Walletd) Reset(scanHeight int) (*bytes.Buffer, error) {
+func (wallet *Walletd) Reset(scanHeight int) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -68,7 +67,7 @@ func (wallet *Walletd) CreateAddress(
 	spendSecretKey string,
 	spendPublicKey string,
 	scanHeight int,
-	newAddress bool) (*bytes.Buffer, error) {
+	newAddress bool) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -96,7 +95,7 @@ func (wallet *Walletd) CreateAddress(
 /*
 DeleteAddress method deletes the specified address from the container
 */
-func (wallet *Walletd) DeleteAddress(address string) (*bytes.Buffer, error) {
+func (wallet *Walletd) DeleteAddress(address string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -110,7 +109,7 @@ func (wallet *Walletd) DeleteAddress(address string) (*bytes.Buffer, error) {
 GetSpendKeys method returns the spendPublicKey and spendSecretKey corresponding
 the given input wallet address
 */
-func (wallet *Walletd) GetSpendKeys(address string) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetSpendKeys(address string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -124,7 +123,7 @@ func (wallet *Walletd) GetSpendKeys(address string) (*bytes.Buffer, error) {
 GetBalance method returns the balance present in the specified address
 If the address is empty then returns the balance present in the container
 */
-func (wallet *Walletd) GetBalance(address string) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetBalance(address string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -137,7 +136,7 @@ func (wallet *Walletd) GetBalance(address string) (*bytes.Buffer, error) {
 /*
 GetBlockHashes method returns array of hashes starting from specified blockIndex upto blockCount
 */
-func (wallet *Walletd) GetBlockHashes(firstBlockIndex int, blockCount int) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetBlockHashes(firstBlockIndex int, blockCount int) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -157,7 +156,7 @@ func (wallet *Walletd) GetTransactionHashes(
 	blockHash string,
 	firstBlockIndex int,
 	blockCount int,
-	paymentID string) (*bytes.Buffer, error) {
+	paymentID string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -185,7 +184,7 @@ func (wallet *Walletd) GetTransactions(
 	blockHash string,
 	firstBlockIndex int,
 	blockCount int,
-	paymentID string) (*bytes.Buffer, error) {
+	paymentID string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -207,7 +206,7 @@ func (wallet *Walletd) GetTransactions(
 /*
 GetUnconfirmedTransactionHashes method returns array of hashes of unconfirmed transactions of the specified address
 */
-func (wallet *Walletd) GetUnconfirmedTransactionHashes(addresses []string) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetUnconfirmedTransactionHashes(addresses []string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -220,7 +219,7 @@ func (wallet *Walletd) GetUnconfirmedTransactionHashes(addresses []string) (*byt
 /*
 GetTransaction method returns the transaction details of a particular specified transaction hash
 */
-func (wallet *Walletd) GetTransaction(transactionHash string) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetTransaction(transactionHash string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -245,7 +244,7 @@ func (wallet *Walletd) SendTransaction(
 	unlockTime int,
 	extra string,
 	paymentID string,
-	changeAddress string) (*bytes.Buffer, error) {
+	changeAddress string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -280,7 +279,7 @@ func (wallet *Walletd) CreateDelayedTransaction(
 	unlockTime int,
 	extra string,
 	paymentID string,
-	changeAddress string) (*bytes.Buffer, error) {
+	changeAddress string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -306,7 +305,7 @@ func (wallet *Walletd) CreateDelayedTransaction(
 /*
 GetDelayedTransactionHashes method returns array of delayedTransactionHashes
 */
-func (wallet *Walletd) GetDelayedTransactionHashes() (*bytes.Buffer, error) {
+func (wallet *Walletd) GetDelayedTransactionHashes() (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -318,7 +317,7 @@ func (wallet *Walletd) GetDelayedTransactionHashes() (*bytes.Buffer, error) {
 /*
 DeleteDelayedTransaction method deletes the specified delayedTransactionHash
 */
-func (wallet *Walletd) DeleteDelayedTransaction(transactionHash string) (*bytes.Buffer, error) {
+func (wallet *Walletd) DeleteDelayedTransaction(transactionHash string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -332,7 +331,7 @@ func (wallet *Walletd) DeleteDelayedTransaction(transactionHash string) (*bytes.
 SendDelayedTransaction method sends the delayedTransaction created using CreateDelayedTransaction
 method into the network
 */
-func (wallet *Walletd) SendDelayedTransaction(transactionHash string) (*bytes.Buffer, error) {
+func (wallet *Walletd) SendDelayedTransaction(transactionHash string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -345,7 +344,7 @@ func (wallet *Walletd) SendDelayedTransaction(transactionHash string) (*bytes.Bu
 /*
 GetViewKey method returns the viewSecretKey of the wallet
 */
-func (wallet *Walletd) GetViewKey() (*bytes.Buffer, error) {
+func (wallet *Walletd) GetViewKey() (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -358,7 +357,7 @@ func (wallet *Walletd) GetViewKey() (*bytes.Buffer, error) {
 GetMnemonicSeed method returns the 25 word random seed corresponding to
 the given input wallet address
 */
-func (wallet *Walletd) GetMnemonicSeed(address string) (*bytes.Buffer, error) {
+func (wallet *Walletd) GetMnemonicSeed(address string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -371,7 +370,7 @@ func (wallet *Walletd) GetMnemonicSeed(address string) (*bytes.Buffer, error) {
 /*
 GetStatus method returns the sync state of the wallet and known top block height
 */
-func (wallet *Walletd) GetStatus() (*bytes.Buffer, error) {
+func (wallet *Walletd) GetStatus() (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -383,7 +382,7 @@ func (wallet *Walletd) GetStatus() (*bytes.Buffer, error) {
 /*
 GetAddresses method returns an array of addresses present in the container
 */
-func (wallet *Walletd) GetAddresses() (*bytes.Buffer, error) {
+func (wallet *Walletd) GetAddresses() (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -399,7 +398,7 @@ address. If there aren't any outputs that can be optimized it returns an error.
 func (wallet *Walletd) SendFusionTransaction(
 	threshold int,
 	addresses []string,
-	destinationAddress string) (*bytes.Buffer, error) {
+	destinationAddress string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -415,7 +414,7 @@ func (wallet *Walletd) SendFusionTransaction(
 EstimateFusion method returns the number of outputs that can be optimized
 This is helpful for sending fusion transactions
 */
-func (wallet *Walletd) EstimateFusion(threshold int, addresses []string) (*bytes.Buffer, error) {
+func (wallet *Walletd) EstimateFusion(threshold int, addresses []string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -430,7 +429,7 @@ func (wallet *Walletd) EstimateFusion(threshold int, addresses []string) (*bytes
 CreateIntegratedAddress method creates a unique 236 char long address which corresponds to
 the specified address with paymentID
 */
-func (wallet *Walletd) CreateIntegratedAddress(address string, paymentID string) (*bytes.Buffer, error) {
+func (wallet *Walletd) CreateIntegratedAddress(address string, paymentID string) (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
@@ -445,7 +444,7 @@ func (wallet *Walletd) CreateIntegratedAddress(address string, paymentID string)
 GetFeeInfo method returns the fee information that the service picks up from the
 connected daemon
 */
-func (wallet *Walletd) GetFeeInfo() (*bytes.Buffer, error) {
+func (wallet *Walletd) GetFeeInfo() (map[string]interface{}, error) {
 	err := wallet.check()
 	if err != nil {
 		return nil, err
