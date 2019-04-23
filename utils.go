@@ -12,6 +12,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -23,7 +24,15 @@ func (daemon *TurtleCoind) makeGetRequest(method string) map[string]interface{} 
 		fmt.Println(err)
 		return nil
 	}
-	return decodeResponse(req)
+
+	resp := performRequest(req)
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println(resp.StatusCode, resp.Status)
+		return nil
+	}
+
+	return decodeResponse(resp.Body)
 }
 
 func (daemon *TurtleCoind) makePostRequest(method string, params interface{}) map[string]interface{} {
@@ -46,7 +55,14 @@ func (daemon *TurtleCoind) makePostRequest(method string, params interface{}) ma
 		return nil
 	}
 
-	return decodeResponse(req)
+	resp := performRequest(req)
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println(resp.StatusCode, resp.Status)
+		return nil
+	}
+
+	return decodeResponse(resp.Body)
 }
 
 func (wallet *Walletd) makePostRequest(method string, params interface{}) map[string]interface{} {
@@ -71,10 +87,17 @@ func (wallet *Walletd) makePostRequest(method string, params interface{}) map[st
 		return nil
 	}
 
-	return decodeResponse(req)
+	resp := performRequest(req)
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println(resp.StatusCode, resp.Status)
+		return nil
+	}
+
+	return decodeResponse(resp.Body)
 }
 
-func decodeResponse(req *http.Request) map[string]interface{} {
+func performRequest(req *http.Request) *http.Response {
 	client := &http.Client{}
 
 	resp, err := client.Do(req)
@@ -82,24 +105,24 @@ func decodeResponse(req *http.Request) map[string]interface{} {
 		fmt.Println(err)
 		return nil
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode == http.StatusOK {
-		respBody, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println(err)
-			return nil
-		}
+	return resp
+}
 
-		var respBodyInterface interface{}
-		if err = json.Unmarshal(respBody, &respBodyInterface); err != nil {
-			fmt.Println(err)
-			return nil
-		}
+func decodeResponse(body io.ReadCloser) map[string]interface{} {
+	defer body.Close()
 
-		return respBodyInterface.(map[string]interface{})
+	respBody, err := ioutil.ReadAll(body)
+	if err != nil {
+		fmt.Println(err)
+		return nil
 	}
 
-	fmt.Println(resp.StatusCode, resp.Status)
-	return nil
+	var respBodyInterface interface{}
+	if err = json.Unmarshal(respBody, &respBodyInterface); err != nil {
+		fmt.Println(err)
+		return nil
+	}
+
+	return respBodyInterface.(map[string]interface{})
 }
