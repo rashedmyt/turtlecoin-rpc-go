@@ -12,8 +12,8 @@ import (
 	"errors"
 )
 
-// Walletd structure contains the URL and Port
-// info of the node and RPC Password for RPC calls
+// Walletd structure contains the URL and Port info of
+// the wallet service and RPC Password for RPC calls
 type Walletd struct {
 	URL         string
 	Port        int
