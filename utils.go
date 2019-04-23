@@ -44,9 +44,9 @@ func (daemon *TurtleCoind) makePostRequest(method string, params interface{}) ma
 
 	body := bytes.NewBuffer(jsonpayload)
 
-	req, err1 := http.NewRequest("POST", "http://"+daemon.URL+":"+strconv.Itoa(daemon.Port)+"/json_rpc", body)
-	if err1 != nil {
-		fmt.Println(err1)
+	req, err := http.NewRequest("POST", "http://"+daemon.URL+":"+strconv.Itoa(daemon.Port)+"/json_rpc", body)
+	if err != nil {
+		fmt.Println(err)
 		return nil
 	}
 
@@ -76,12 +76,48 @@ func (wallet *Walletd) makePostRequest(method string, params interface{}) map[st
 
 	body := bytes.NewBuffer(jsonpayload)
 
-	req, err1 := http.NewRequest("POST", "http://"+wallet.URL+":"+strconv.Itoa(wallet.Port)+"/json_rpc", body)
-	if err1 != nil {
-		fmt.Println(err1)
+	req, err := http.NewRequest("POST", "http://"+wallet.URL+":"+strconv.Itoa(wallet.Port)+"/json_rpc", body)
+	if err != nil {
+		fmt.Println(err)
 		return nil
 	}
 
+	resp := performRequest(req)
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println(resp.StatusCode, resp.Status)
+		return nil
+	}
+
+	return decodeResponse(resp.Body)
+}
+
+func (wallet *WalletAPI) makeGetRequest(method string) map[string]interface{} {
+	req, err := http.NewRequest("GET", "http://"+wallet.URL+":"+strconv.Itoa(wallet.Port)+"/"+method, nil)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+
+	req.Header.Set("X-API-KEY", wallet.RPCPassword)
+	resp := performRequest(req)
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println(resp.StatusCode, resp.Status)
+		return nil
+	}
+
+	return decodeResponse(resp.Body)
+}
+
+func (wallet *WalletAPI) makeDeleteRequest(method string) map[string]interface{} {
+	req, err := http.NewRequest("DELETE", "http://"+wallet.URL+":"+strconv.Itoa(wallet.Port)+"/"+method, nil)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+
+	req.Header.Set("X-API-KEY", wallet.RPCPassword)
 	resp := performRequest(req)
 
 	if resp.StatusCode != http.StatusOK {
