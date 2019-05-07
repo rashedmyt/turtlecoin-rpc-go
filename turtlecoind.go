@@ -22,17 +22,19 @@ func (daemon *TurtleCoind) check() {
 /*
 Info method returns information related to network and connection
 */
-func (daemon *TurtleCoind) Info() map[string]interface{} {
+func (daemon *TurtleCoind) Info() (map[string]interface{}, error) {
 	daemon.check()
-	return daemon.makeGetRequest("getinfo")
+	resp, err := daemon.makeGetRequest("getinfo")
+	return resp.(map[string]interface{}), err
 }
 
 /*
 Height method returns the height of the blockchain
 */
-func (daemon *TurtleCoind) Height() map[string]interface{} {
+func (daemon *TurtleCoind) Height() (map[string]interface{}, error) {
 	daemon.check()
-	return daemon.makeGetRequest("getheight")
+	resp, err := daemon.makeGetRequest("getheight")
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -45,130 +47,144 @@ func (daemon *TurtleCoind) Transactions() map[string]interface{} {
 /*
 Fee method returns the fee set by the node
 */
-func (daemon *TurtleCoind) Fee() map[string]interface{} {
+func (daemon *TurtleCoind) Fee() (map[string]interface{}, error) {
 	daemon.check()
-	return daemon.makeGetRequest("feeinfo")
+	resp, err := daemon.makeGetRequest("feeinfo")
+	return resp.(map[string]interface{}), err
 }
 
 /*
 Peers method returns array of peers connected to daemon
 */
-func (daemon *TurtleCoind) Peers() map[string]interface{} {
+func (daemon *TurtleCoind) Peers() (map[string]interface{}, error) {
 	daemon.check()
-	return daemon.makeGetRequest("getpeers")
+	resp, err := daemon.makeGetRequest("getpeers")
+	return resp.(map[string]interface{}), err
 }
 
 /*
 GetBlocks method returns information on 30 blocks from specified height (inclusive)
 */
-func (daemon *TurtleCoind) GetBlocks(height int) map[string]interface{} {
+func (daemon *TurtleCoind) GetBlocks(height int) (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
 	params["height"] = height
-	return daemon.makePostRequest("f_blocks_list_json", params)
+	resp, err := daemon.makePostRequest("f_blocks_list_json", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
 GetBlock method returns the information of block corresponding to given input hash
 */
-func (daemon *TurtleCoind) GetBlock(hash string) map[string]interface{} {
+func (daemon *TurtleCoind) GetBlock(hash string) (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
 	params["hash"] = hash
-	return daemon.makePostRequest("f_block_json", params)
+	resp, err := daemon.makePostRequest("f_block_json", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
 GetTransaction method returns information of transaction corresponding to given input hash
 */
-func (daemon *TurtleCoind) GetTransaction(hash string) map[string]interface{} {
+func (daemon *TurtleCoind) GetTransaction(hash string) (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
 	params["hash"] = hash
-	return daemon.makePostRequest("f_transaction_json", params)
+	resp, err := daemon.makePostRequest("f_transaction_json", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
 GetTransactionPool method returns the list of unconfirmed transactions present in mem pool
 */
-func (daemon *TurtleCoind) GetTransactionPool() map[string]interface{} {
+func (daemon *TurtleCoind) GetTransactionPool() (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
-	return daemon.makePostRequest("f_on_transactions_pool_json", params)
+	resp, err := daemon.makePostRequest("f_on_transactions_pool_json", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
 GetBlockCount method returns the height of the top block
 */
-func (daemon *TurtleCoind) GetBlockCount() map[string]interface{} {
+func (daemon *TurtleCoind) GetBlockCount() (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
-	return daemon.makePostRequest("getblockcount", params)
+	resp, err := daemon.makePostRequest("getblockcount", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
 GetBlockHash method returns the block hash by height
 */
-func (daemon *TurtleCoind) GetBlockHash(height int) map[string]interface{} {
+func (daemon *TurtleCoind) GetBlockHash(height int) (map[string]interface{}, error) {
 	daemon.check()
 	params := []int{height}
-	return daemon.makePostRequest("on_getblockhash", params)
+	resp, err := daemon.makePostRequest("on_getblockhash", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
 GetBlockTemplate method returns the block template blob of the last block
 */
-func (daemon *TurtleCoind) GetBlockTemplate(reserveSize int, walletAddress string) map[string]interface{} {
+func (daemon *TurtleCoind) GetBlockTemplate(reserveSize int, walletAddress string) (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
 	params["reserve_size"] = reserveSize
 	params["wallet_address"] = walletAddress
-	return daemon.makePostRequest("getblocktemplate", params)
+	resp, err := daemon.makePostRequest("getblocktemplate", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
 GetCurrencyID method returns the currency id of the network
 */
-func (daemon *TurtleCoind) GetCurrencyID() map[string]interface{} {
+func (daemon *TurtleCoind) GetCurrencyID() (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
-	return daemon.makePostRequest("getcurrencyid", params)
+	resp, err := daemon.makePostRequest("getcurrencyid", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
 SubmitBlock method submits a block to the network corresponding to the input block blob
 */
-func (daemon *TurtleCoind) SubmitBlock(blockBlob string) map[string]interface{} {
+func (daemon *TurtleCoind) SubmitBlock(blockBlob string) (map[string]interface{}, error) {
 	daemon.check()
 	params := []string{blockBlob}
-	return daemon.makePostRequest("submitblock", params)
+	resp, err := daemon.makePostRequest("submitblock", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
 GetLastBlockHeader method returns the block header of the last block
 */
-func (daemon *TurtleCoind) GetLastBlockHeader() map[string]interface{} {
+func (daemon *TurtleCoind) GetLastBlockHeader() (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
-	return daemon.makePostRequest("getlastblockheader", params)
+	resp, err := daemon.makePostRequest("getlastblockheader", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
 GetBlockHeaderByHash method returns the block header corresponding to the input block hash
 */
-func (daemon *TurtleCoind) GetBlockHeaderByHash(hash string) map[string]interface{} {
+func (daemon *TurtleCoind) GetBlockHeaderByHash(hash string) (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
 	params["hash"] = hash
-	return daemon.makePostRequest("getblockheaderbyhash", params)
+	resp, err := daemon.makePostRequest("getblockheaderbyhash", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
 GetBlockHeaderByHeight method returns the block header corresponding to the input block height
 */
-func (daemon *TurtleCoind) GetBlockHeaderByHeight(height int) map[string]interface{} {
+func (daemon *TurtleCoind) GetBlockHeaderByHeight(height int) (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
 	params["height"] = height
-	return daemon.makePostRequest("getblockheaderbyheight", params)
+	resp, err := daemon.makePostRequest("getblockheaderbyheight", params)
+	return resp.(map[string]interface{}), err
 }

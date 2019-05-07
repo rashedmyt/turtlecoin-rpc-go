@@ -37,7 +37,8 @@ func (wallet *Walletd) Save() (map[string]interface{}, error) {
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("save", params), nil
+	resp, err := wallet.makePostRequest("save", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -52,7 +53,8 @@ func (wallet *Walletd) Reset(scanHeight int) (map[string]interface{}, error) {
 	}
 	params := make(map[string]interface{})
 	params["scanHeight"] = scanHeight
-	return wallet.makePostRequest("reset", params), nil
+	resp, err := wallet.makePostRequest("reset", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -84,7 +86,8 @@ func (wallet *Walletd) CreateAddress(
 		params["scanHeight"] = scanHeight
 	}
 
-	return wallet.makePostRequest("createAddress", params), nil
+	resp, err := wallet.makePostRequest("createAddress", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -97,7 +100,8 @@ func (wallet *Walletd) DeleteAddress(address string) (map[string]interface{}, er
 	}
 	params := make(map[string]interface{})
 	params["address"] = address
-	return wallet.makePostRequest("deleteAddress", params), nil
+	resp, err := wallet.makePostRequest("deleteAddress", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -111,7 +115,8 @@ func (wallet *Walletd) GetSpendKeys(address string) (map[string]interface{}, err
 	}
 	params := make(map[string]interface{})
 	params["address"] = address
-	return wallet.makePostRequest("getSpendKeys", params), nil
+	resp, err := wallet.makePostRequest("getSpendKeys", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -125,7 +130,8 @@ func (wallet *Walletd) GetBalance(address string) (map[string]interface{}, error
 	}
 	params := make(map[string]interface{})
 	params["address"] = address
-	return wallet.makePostRequest("getBalance", params), nil
+	resp, err := wallet.makePostRequest("getBalance", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -139,7 +145,8 @@ func (wallet *Walletd) GetBlockHashes(firstBlockIndex int, blockCount int) (map[
 	params := make(map[string]interface{})
 	params["firstBlockIndex"] = firstBlockIndex
 	params["blockCount"] = blockCount
-	return wallet.makePostRequest("getBlockHashes", params), nil
+	resp, err := wallet.makePostRequest("getBlockHashes", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -167,7 +174,8 @@ func (wallet *Walletd) GetTransactionHashes(
 	params["addresses"] = addresses
 	params["blockCount"] = blockCount
 	params["paymentId"] = paymentID
-	return wallet.makePostRequest("getTransactionHashes", params), nil
+	resp, err := wallet.makePostRequest("getTransactionHashes", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -195,7 +203,8 @@ func (wallet *Walletd) GetTransactions(
 	params["addresses"] = addresses
 	params["blockCount"] = blockCount
 	params["paymentId"] = paymentID
-	return wallet.makePostRequest("getTransactions", params), nil
+	resp, err := wallet.makePostRequest("getTransactions", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -208,7 +217,8 @@ func (wallet *Walletd) GetUnconfirmedTransactionHashes(addresses []string) (map[
 	}
 	params := make(map[string]interface{})
 	params["addresses"] = addresses
-	return wallet.makePostRequest("getUnconfirmedTransactionHashes", params), nil
+	resp, err := wallet.makePostRequest("getUnconfirmedTransactionHashes", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -226,7 +236,8 @@ func (wallet *Walletd) GetTransaction(transactionHash string) (map[string]interf
 	}
 
 	params["transactionHash"] = transactionHash
-	return wallet.makePostRequest("getTransaction", params), nil
+	resp, err := wallet.makePostRequest("getTransaction", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -259,7 +270,8 @@ func (wallet *Walletd) SendTransaction(
 		params["paymentId"] = paymentID
 	}
 
-	return wallet.makePostRequest("sendTransaction", params), nil
+	resp, err := wallet.makePostRequest("sendTransaction", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -294,7 +306,8 @@ func (wallet *Walletd) CreateDelayedTransaction(
 		params["paymentId"] = paymentID
 	}
 
-	return wallet.makePostRequest("createDelayedTransaction", params), nil
+	resp, err := wallet.makePostRequest("createDelayedTransaction", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -306,7 +319,8 @@ func (wallet *Walletd) GetDelayedTransactionHashes() (map[string]interface{}, er
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("getDelayedTransactionHashes", params), nil
+	resp, err := wallet.makePostRequest("getDelayedTransactionHashes", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -319,7 +333,8 @@ func (wallet *Walletd) DeleteDelayedTransaction(transactionHash string) (map[str
 	}
 	params := make(map[string]interface{})
 	params["transactionHash"] = transactionHash
-	return wallet.makePostRequest("deleteDelayedTransaction", params), nil
+	resp, err := wallet.makePostRequest("deleteDelayedTransaction", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -333,7 +348,8 @@ func (wallet *Walletd) SendDelayedTransaction(transactionHash string) (map[strin
 	}
 	params := make(map[string]interface{})
 	params["transactionHash"] = transactionHash
-	return wallet.makePostRequest("sendDelayedTransaction", params), nil
+	resp, err := wallet.makePostRequest("sendDelayedTransaction", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -345,7 +361,8 @@ func (wallet *Walletd) GetViewKey() (map[string]interface{}, error) {
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("getViewKey", params), nil
+	resp, err := wallet.makePostRequest("getViewKey", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -359,7 +376,8 @@ func (wallet *Walletd) GetMnemonicSeed(address string) (map[string]interface{}, 
 	}
 	params := make(map[string]interface{})
 	params["address"] = address
-	return wallet.makePostRequest("getMnemonicSeed", params), nil
+	resp, err := wallet.makePostRequest("getMnemonicSeed", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -371,7 +389,8 @@ func (wallet *Walletd) GetStatus() (map[string]interface{}, error) {
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("getStatus", params), nil
+	resp, err := wallet.makePostRequest("getStatus", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -383,7 +402,8 @@ func (wallet *Walletd) GetAddresses() (map[string]interface{}, error) {
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("getAddresses", params), nil
+	resp, err := wallet.makePostRequest("getAddresses", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -402,7 +422,8 @@ func (wallet *Walletd) SendFusionTransaction(
 	params["threshold"] = threshold
 	params["addresses"] = addresses
 	params["destinationAddress"] = destinationAddress
-	return wallet.makePostRequest("sendFusionTransaction", params), nil
+	resp, err := wallet.makePostRequest("sendFusionTransaction", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -417,7 +438,8 @@ func (wallet *Walletd) EstimateFusion(threshold int, addresses []string) (map[st
 	params := make(map[string]interface{})
 	params["threshold"] = threshold
 	params["addresses"] = addresses
-	return wallet.makePostRequest("estimateFusion", params), nil
+	resp, err := wallet.makePostRequest("estimateFusion", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -432,7 +454,8 @@ func (wallet *Walletd) CreateIntegratedAddress(address string, paymentID string)
 	params := make(map[string]interface{})
 	params["address"] = address
 	params["paymentId"] = paymentID
-	return wallet.makePostRequest("createIntegratedAddress", params), nil
+	resp, err := wallet.makePostRequest("createIntegratedAddress", params)
+	return resp.(map[string]interface{}), err
 }
 
 /*
@@ -445,5 +468,6 @@ func (wallet *Walletd) GetFeeInfo() (map[string]interface{}, error) {
 		return nil, err
 	}
 	params := make(map[string]interface{})
-	return wallet.makePostRequest("getFeeInfo", params), nil
+	resp, err := wallet.makePostRequest("getFeeInfo", params)
+	return resp.(map[string]interface{}), err
 }
