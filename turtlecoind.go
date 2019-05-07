@@ -25,7 +25,11 @@ Info method returns information related to network and connection
 func (daemon *TurtleCoind) Info() (map[string]interface{}, error) {
 	daemon.check()
 	resp, err := daemon.makeGetRequest("getinfo")
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -34,7 +38,11 @@ Height method returns the height of the blockchain
 func (daemon *TurtleCoind) Height() (map[string]interface{}, error) {
 	daemon.check()
 	resp, err := daemon.makeGetRequest("getheight")
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -50,7 +58,11 @@ Fee method returns the fee set by the node
 func (daemon *TurtleCoind) Fee() (map[string]interface{}, error) {
 	daemon.check()
 	resp, err := daemon.makeGetRequest("feeinfo")
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -59,7 +71,11 @@ Peers method returns array of peers connected to daemon
 func (daemon *TurtleCoind) Peers() (map[string]interface{}, error) {
 	daemon.check()
 	resp, err := daemon.makeGetRequest("getpeers")
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -70,7 +86,11 @@ func (daemon *TurtleCoind) GetBlocks(height int) (map[string]interface{}, error)
 	params := make(map[string]interface{})
 	params["height"] = height
 	resp, err := daemon.makePostRequest("f_blocks_list_json", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -81,7 +101,11 @@ func (daemon *TurtleCoind) GetBlock(hash string) (map[string]interface{}, error)
 	params := make(map[string]interface{})
 	params["hash"] = hash
 	resp, err := daemon.makePostRequest("f_block_json", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -92,7 +116,11 @@ func (daemon *TurtleCoind) GetTransaction(hash string) (map[string]interface{}, 
 	params := make(map[string]interface{})
 	params["hash"] = hash
 	resp, err := daemon.makePostRequest("f_transaction_json", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -102,7 +130,11 @@ func (daemon *TurtleCoind) GetTransactionPool() (map[string]interface{}, error) 
 	daemon.check()
 	params := make(map[string]interface{})
 	resp, err := daemon.makePostRequest("f_on_transactions_pool_json", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -112,7 +144,11 @@ func (daemon *TurtleCoind) GetBlockCount() (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
 	resp, err := daemon.makePostRequest("getblockcount", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -122,7 +158,11 @@ func (daemon *TurtleCoind) GetBlockHash(height int) (map[string]interface{}, err
 	daemon.check()
 	params := []int{height}
 	resp, err := daemon.makePostRequest("on_getblockhash", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -134,7 +174,11 @@ func (daemon *TurtleCoind) GetBlockTemplate(reserveSize int, walletAddress strin
 	params["reserve_size"] = reserveSize
 	params["wallet_address"] = walletAddress
 	resp, err := daemon.makePostRequest("getblocktemplate", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -144,7 +188,11 @@ func (daemon *TurtleCoind) GetCurrencyID() (map[string]interface{}, error) {
 	daemon.check()
 	params := make(map[string]interface{})
 	resp, err := daemon.makePostRequest("getcurrencyid", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -154,7 +202,11 @@ func (daemon *TurtleCoind) SubmitBlock(blockBlob string) (map[string]interface{}
 	daemon.check()
 	params := []string{blockBlob}
 	resp, err := daemon.makePostRequest("submitblock", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -164,7 +216,11 @@ func (daemon *TurtleCoind) GetLastBlockHeader() (map[string]interface{}, error) 
 	daemon.check()
 	params := make(map[string]interface{})
 	resp, err := daemon.makePostRequest("getlastblockheader", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -175,7 +231,11 @@ func (daemon *TurtleCoind) GetBlockHeaderByHash(hash string) (map[string]interfa
 	params := make(map[string]interface{})
 	params["hash"] = hash
 	resp, err := daemon.makePostRequest("getblockheaderbyhash", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
 
 /*
@@ -186,5 +246,9 @@ func (daemon *TurtleCoind) GetBlockHeaderByHeight(height int) (map[string]interf
 	params := make(map[string]interface{})
 	params["height"] = height
 	resp, err := daemon.makePostRequest("getblockheaderbyheight", params)
-	return resp.(map[string]interface{}), err
+	if resp != nil {
+		return resp.(map[string]interface{}), err
+	}
+
+	return nil, err
 }
