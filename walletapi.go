@@ -700,6 +700,9 @@ func (wallet *WalletAPI) SendBasicTransaction(
 	amount int,
 	paymentID string) (map[string]interface{}, error) {
 	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 
 	if destinationAddress == "" {
 		return nil, errors.New("Destination Address is required")
@@ -736,6 +739,9 @@ func (wallet *WalletAPI) SendAdvancedTransaction(
 	changeAddress string,
 	unlockTime int) (map[string]interface{}, error) {
 	err := wallet.check()
+	if err != nil {
+		return nil, err
+	}
 
 	for _, obj := range destinations {
 		if obj["address"] == "" {
